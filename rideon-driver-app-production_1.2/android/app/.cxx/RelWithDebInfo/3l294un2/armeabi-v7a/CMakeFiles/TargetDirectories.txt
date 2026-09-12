@@ -1,0 +1,2 @@
+/Users/allansizh/Documents/ride_on_driver/android/app/.cxx/RelWithDebInfo/3l294un2/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/allansizh/Documents/ride_on_driver/android/app/.cxx/RelWithDebInfo/3l294un2/armeabi-v7a/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,2 @@
+/Users/gadgetzone/Documents/amartaxi-driver-app/android/app/.cxx/RelWithDebInfo/b5e4o5b4/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/gadgetzone/Documents/amartaxi-driver-app/android/app/.cxx/RelWithDebInfo/b5e4o5b4/armeabi-v7a/CMakeFiles/rebuild_cache.dir

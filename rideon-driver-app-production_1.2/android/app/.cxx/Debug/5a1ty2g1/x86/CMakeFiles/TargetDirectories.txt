@@ -1,0 +1,2 @@
+/Users/allansizh/Documents/ride_on_driver/android/app/.cxx/Debug/5a1ty2g1/x86/CMakeFiles/edit_cache.dir
+/Users/allansizh/Documents/ride_on_driver/android/app/.cxx/Debug/5a1ty2g1/x86/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/allansizh/Documents/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/allansizh/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/allansizh/Documents/ride_on_driver/android/app/.cxx/RelWithDebInfo/3l294un2/x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/allansizh/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/allansizh/Documents/ride_on_driver/android/app/.cxx/RelWithDebInfo/3l294un2/x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

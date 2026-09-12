@@ -1,0 +1,1 @@
+/Users/gadgetzone/Documents/Mehkaar/amartaxi-driver-app/build/app/intermediates/cxx/RelWithDebInfo/3i5g2785/obj/arm64-v8a

@@ -1,0 +1,2 @@
+/Users/gadgetzone/Documents/Mehkaar/sizhIT/ride_on_driver-app/android/app/.cxx/Debug/21j484c2/x86/CMakeFiles/edit_cache.dir
+/Users/gadgetzone/Documents/Mehkaar/sizhIT/ride_on_driver-app/android/app/.cxx/Debug/21j484c2/x86/CMakeFiles/rebuild_cache.dir
