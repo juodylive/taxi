@@ -19,7 +19,7 @@ import '../../cubits/register_vehicle/profile_cubit.dart';
 import '../../cubits/register_vehicle/register_vehicle_document.dart';
 import '../../cubits/register_vehicle/vehicle_register_cubit.dart';
 import '../../widgets/welcome_screen.dart';
-import '../Auth/login_screen.dart';
+import '../auth/login_screen.dart';
 import 'driver_document_screen.dart';
 import 'driver_profile_screen.dart';
 import 'driver_vehicle_screen.dart';
