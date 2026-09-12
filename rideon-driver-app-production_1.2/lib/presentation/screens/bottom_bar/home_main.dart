@@ -9,13 +9,12 @@ import '../../../core/services/data_store.dart';
 import '../../../core/utils/theme/project_color.dart';
 import '../../../core/utils/theme/theme_style.dart';
 import '../../cubits/bottom_bar_cubit.dart';
-import '../../cubits/general_cubit.dart';
- import '../../cubits/realtime/listen_ride_request_cubit.dart';
+import '../../cubits/general_cubit.dart'; import '../../cubits/realtime/listen_ride_request_cubit.dart';
 import '../../cubits/realtime/manage_driver_cubit.dart';
 import '../../widgets/internet_checkert.dart';
-import '../Account/my_account_screen.dart';
-import '../Home/item_home_screen.dart';
-import '../Payment/finance_screen.dart';
+import '../account/my_account_screen.dart';
+import '../home/item_home_screen.dart';
+import '../payment/finance_screen.dart';
 import '../history/history_screen.dart';
 
 class HomeMain extends StatefulWidget {
