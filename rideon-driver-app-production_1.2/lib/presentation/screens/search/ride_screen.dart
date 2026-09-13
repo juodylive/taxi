@@ -17,7 +17,7 @@ import '../../cubits/realtime/listen_ride_request_cubit.dart';
 import '../../cubits/realtime/manage_driver_cubit.dart';
 import '../../cubits/realtime/ride_status_cubit.dart';
 import '../../widgets/sos_widget.dart';
-import '../Payment/payment_screen.dart';
+import '../payment/payment_screen.dart';
 import '../bottom_bar/home_main.dart';
 import 'otp_verify_ride_screen.dart';
 
