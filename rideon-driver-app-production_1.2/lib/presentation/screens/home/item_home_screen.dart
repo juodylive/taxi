@@ -24,7 +24,7 @@ import '../../cubits/payment/wallet_data_cubit.dart';
 import '../../cubits/realtime/listen_ride_request_cubit.dart';
 import '../../cubits/realtime/manage_driver_cubit.dart';
 import '../../cubits/realtime/ride_status_cubit.dart';
-import '../Search/ride_screen.dart';
+import '../search/ride_screen.dart';
 import '../splash/allow_location_screen.dart';
 
 class ItemHomeScreen extends StatefulWidget {
