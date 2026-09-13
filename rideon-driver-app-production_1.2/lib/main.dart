@@ -19,7 +19,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:provider/provider.dart';
 import 'package:ride_on_driver/presentation/cubits/localizations_cubit.dart';
 import 'package:ride_on_driver/presentation/cubits/location/ringtone_cubit.dart';
-import 'package:ride_on_driver/presentation/screens/Splash/initial_screen.dart';
+import 'package:ride_on_driver/presentation/screens/splash/initial_screen.dart';
 import 'core/extensions/helper/push_notifications.dart';
 import 'core/extensions/workspace.dart';
 import 'core/utils/theme/project_color.dart';
