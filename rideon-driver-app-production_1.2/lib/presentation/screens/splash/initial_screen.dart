@@ -5,15 +5,15 @@ import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:ride_on_driver/core/services/data_store.dart';
 import 'package:ride_on_driver/core/utils/common_widget.dart';
- import 'package:ride_on_driver/presentation/cubits/realtime/ride_status_cubit.dart';
-import 'package:ride_on_driver/presentation/screens/Splash/splash_screen.dart';
+import 'package:ride_on_driver/presentation/cubits/realtime/ride_status_cubit.dart';
+import 'package:ride_on_driver/presentation/screens/splash/splash_screen.dart';
 import 'package:ride_on_driver/presentation/screens/bottom_bar/home_main.dart';
 import 'package:ride_on_driver/presentation/screens/payment/payment_screen.dart';
 import 'package:ride_on_driver/presentation/widgets/custome_review_widget.dart';
 import '../../../core/extensions/workspace.dart';
 import '../../../core/utils/theme/project_color.dart';
-import '../Onboarding/on_boarding_screen.dart';
-import '../Search/ride_screen.dart';
+import '../onboarding/on_boarding_screen.dart';
+import '../search/ride_screen.dart';
 
 class InitialScreen extends StatefulWidget {
   const InitialScreen({super.key});
