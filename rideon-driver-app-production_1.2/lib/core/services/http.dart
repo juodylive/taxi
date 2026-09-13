@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../presentation/cubits/logout_cubit.dart';
-import '../../presentation/screens/Auth/login_screen.dart';
+import '../../presentation/screens/auth/login_screen.dart';
 import '../extensions/workspace.dart';
 import '../utils/common_widget.dart';
 import 'config.dart';
