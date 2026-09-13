@@ -9,7 +9,7 @@ import 'package:ride_on_driver/core/utils/translate.dart';
 import '../../../core/utils/common_widget.dart';
 import '../../../core/utils/theme/project_color.dart';
 import '../../../core/utils/theme/theme_style.dart';
-import '../Auth/login_screen.dart';
+import '../auth/login_screen.dart';
 
 class AllowLocationScreen extends StatefulWidget {
   const AllowLocationScreen({super.key});
