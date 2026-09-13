@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:ride_on_driver/core/utils/translate.dart';
-import 'package:ride_on_driver/presentation/screens/Payment/payout_screen.dart';
+import 'package:ride_on_driver/presentation/screens/payment/payout_screen.dart';
 import 'package:ride_on_driver/presentation/screens/payment/wallet_recharge_screen.dart';
 
 import '../../../core/extensions/workspace.dart';
