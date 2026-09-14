@@ -13,121 +13,7 @@ bool connectionLost = false;
 String latitudeGlobal = '';
 String longitudeGlobal = '';
 bool shouldLogout = false;
-
-// ==================== بيانات وهمية للتجربة ====================
-// اجعل هذه القيمة true لتفعيل الوضع الوهمي بالكامل
-// أو false للعودة للاتصال الحقيقي بالسيرفر
-const bool USE_FAKE_DATA = true;
-
-// البيانات الوهمية الأساسية
-Map<String, dynamic> _fakeDriverData() => {
-      "token": "fake_token_123456789",
-      "fireStoreId": "driver_001",
-      "firestore_id": "driver_001",
-      "phone": "+962790000000",
-      "phone_country": "+962",
-      "phoneCountry": "+962",
-      "default_country": "JO",
-      "defaultCountry": "JO",
-      "first_name": "Test",
-      "last_name": "Driver",
-      "name": "Test Driver",
-      "user_name": "Test Driver",
-      "email": "test@test.com",
-      "id": 1,
-      "user_id": 1,
-      "is_verified": 1,
-      "is_online": 1,
-      "is_available": 1,
-      "wallet_balance": 100.0,
-      "rating": 5.0,
-      "total_rides": 10,
-      "total_earnings": 500.0,
-      "otpValue": "1234",
-      "otp_value": "1234",
-      "profile_picture": "",
-      "image": "",
-      "status": 1,
-      "vehicle_id": 1,
-    };
-
-Map<String, dynamic> _fakeResponse(String path) {
-  // ==================== استجابات وهمية حسب المسار ====================
-
-  // تسجيل / دخول
-  if (path.contains("register") ||
-      path.contains("login") ||
-      path.contains("otp")) {
-    return {
-      "status": 200,
-      "success": true,
-      "message": "Success",
-      "data": _fakeDriverData(),
-    };
-  }
-
-  // الملف الشخصي
-  if (path.contains("profile") || path.contains("account")) {
-    return {
-      "status": 200,
-      "success": true,
-      "data": _fakeDriverData(),
-    };
-  }
-
-  // المحفظة
-  if (path.contains("wallet") || path.contains("payout")) {
-    return {
-      "status": 200,
-      "success": true,
-      "data": {
-        "balance": 100.0,
-        "wallet_balance": 100.0,
-        "total_earnings": 500.0,
-        "total_withdrawn": 400.0,
-        "transactions": [],
-      }
-    };
-  }
-
-  // الرحلات
-  if (path.contains("ride") || path.contains("trip") || path.contains("history")) {
-    return {
-      "status": 200,
-      "success": true,
-      "data": [],
-      "rides": [],
-      "trips": [],
-    };
-  }
-
-  // الإشعارات
-  if (path.contains("notification")) {
-    return {
-      "status": 200,
-      "success": true,
-      "data": [],
-    };
-  }
-
-  // عام
-  return {
-    "status": 200,
-    "success": true,
-    "message": "Success",
-    "data": _fakeDriverData(),
-  };
-}
-// ==============================================================
-
 Future<dynamic> httpPost(path, data, {required BuildContext context}) async {
-  // ==================== الوضع الوهمي ====================
-  if (USE_FAKE_DATA) {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return _fakeResponse(path.toString());
-  }
-  // ======================================================
-
   try {
     String apiBaseUrl = Config.baseUrl;
     var url = apiBaseUrl + path;
@@ -183,13 +69,6 @@ Future<dynamic> httpPost(path, data, {required BuildContext context}) async {
 
 Future<dynamic> httpGet(String path, Map<String, dynamic> data,
     {required BuildContext context}) async {
-  // ==================== الوضع الوهمي ====================
-  if (USE_FAKE_DATA) {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return _fakeResponse(path);
-  }
-  // ======================================================
-
   dynamic responsegetData;
   try {
     String apiBaseUrl = Config.baseUrl;
@@ -214,7 +93,7 @@ Future<dynamic> httpGet(String path, Map<String, dynamic> data,
     var fullUrl = "$url?$queryString";
     var response = await http
         .get(Uri.parse(fullUrl), headers: headers)
-        .timeout(const Duration(seconds: 15));
+        .timeout(const Duration(seconds: 15)); // Timeout after 15 seconds
     if (response.statusCode == 200) {
       responsegetData =
           json.decode(const Utf8Codec().decode(response.bodyBytes));
@@ -249,13 +128,6 @@ Future<dynamic> httpGet(String path, Map<String, dynamic> data,
 
 Future<String?>? _tokenFuture;
 Future<String?> generateToken() async {
-  // ==================== الوضع الوهمي ====================
-  if (USE_FAKE_DATA) {
-    bearerToken = "fake_bearer_token_xyz";
-    return "fake_bearer_token_xyz";
-  }
-  // ======================================================
-
   if (_tokenFuture != null) {
     return _tokenFuture;
   }
