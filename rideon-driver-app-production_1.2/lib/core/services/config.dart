@@ -3,7 +3,7 @@ class Config {
  static const String oneSiginalAppid = 'YOUR_ONESIGNAL_APP_ID_HERE';
  static const String oneSiginalApiKey = 'YOUR_ONESIGNAL_API_KEY_HERE';
 // Temporary base domain URL for setup (please add your final URL here)
-  static const String baseDomain = 'https://rideon.unibooker.app';
+  static const String baseDomain = 'https://zearah.dpdns.org';
   // static const String baseDomain = 'https://innovittree.in';
 // Do not change any code below this line. ==================================================
 
