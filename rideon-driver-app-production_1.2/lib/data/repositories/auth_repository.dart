@@ -46,30 +46,22 @@ class AuthRepository {
       required String phoneNumber,
       required String phoneCountry,
       required String otpValue}) async {
-    // ==================== بيانات وهمية للتجربة ====================
-    await Future.delayed(const Duration(seconds: 1));
-
-    return {
-      "status": 200,
-      "data": {
-        "token": "fake_token_123456789",
-        "fireStoreId": "driver_001",
-        "phone": phoneNumber,
-        "phone_country": phoneCountry,
-        "phoneCountry": phoneCountry,
-        "defaultCountry": "JO",
-        "default_country": "JO",
-        "first_name": "Test Driver",
-        "name": "Test Driver",
-        "email": "test@test.com",
-        "id": 1,
-        "is_verified": 1,
-        "wallet_balance": 100.0,
-        "rating": 5.0,
-        "otpValue": "1234",
-      }
-    };
-    // ==============================================================
+    if (!phoneCountry.startsWith("+")) {
+      phoneCountry = '+$phoneCountry';
+    }
+    try {
+      var response = await httpPost(
+          Config.userMobileLogin,
+          {
+            "phone": phoneNumber,
+            "phone_country": phoneCountry,
+            "otp_value": otpValue,
+          },
+          context: context);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<Map<String, dynamic>> signUp(
@@ -79,77 +71,74 @@ class AuthRepository {
       String? email,
       String? phoneCountry,
       String? defaultCountry}) async {
-    // ==================== بيانات وهمية للتجربة ====================
-    await Future.delayed(const Duration(seconds: 1));
-
-    return {
-      "status": 200,
-      "data": {
-        "token": "fake_token_123456789",
-        "fireStoreId": "driver_001",
-        "phone": phoneNumber ?? "+962790000000",
-        "phone_country": phoneCountry ?? "+962",
-        "phoneCountry": phoneCountry ?? "+962",
-        "defaultCountry": defaultCountry ?? "JO",
-        "default_country": defaultCountry ?? "JO",
-        "otpValue": "1234",
-        "first_name": name ?? "Test Driver",
-        "name": name ?? "Test Driver",
-        "email": email ?? "test@test.com",
-        "id": 1,
-        "is_verified": 1,
-        "wallet_balance": 100.0,
-        "rating": 5.0,
-      }
-    };
-    // ==============================================================
+    if (!phoneCountry!.startsWith("+")) {
+      phoneCountry = '+$phoneCountry';
+    }
+    final response = await httpPost(
+        Config.registerUser,
+        {
+          'phone': phoneNumber,
+          'email': email,
+          "phone_country": phoneCountry,
+          "default_country": defaultCountry,
+          "first_name": name
+        },
+        context: context);
+    return response;
   }
 
   Future<Map<String, dynamic>> resendOtp({
     required BuildContext context,
     String? phone,
     String? phoneCountry,
-  }) async {
-    // ==================== بيانات وهمية للتجربة ====================
-    await Future.delayed(const Duration(seconds: 1));
 
-    return {
-      "status": 200,
-      "data": {
-        "phone": phone,
-        "phone_country": phoneCountry,
-        "otpValue": "1234",
-      }
-    };
-    // ==============================================================
+  }) async {
+    if (!phoneCountry!.startsWith("+")) {
+      phoneCountry = '+$phoneCountry';
+    }
+    try {
+
+
+       var   response = await httpPost(
+          context: context,
+          Config.resendOtp,
+          {"phone": phone, "phone_country": phoneCountry});
+
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<Map<String, dynamic>> changePhone({String? phone}) async {
-    // ==================== بيانات وهمية للتجربة ====================
-    await Future.delayed(const Duration(seconds: 1));
 
-    return {
-      "status": 200,
-      "data": {
+    try {
+      var data = {
         "phone": phone,
-        "otpValue": "1234",
-      }
-    };
-    // ==============================================================
+        "phone_country": navigatorKey.currentContext!
+            .read<SetCountryCubit>()
+            .state
+            .dialCode,
+        "default_country":
+            navigatorKey.currentContext!.read<SetCountryCubit>().state.countryCode,
+      };
+      var response = await httpPost(Config.checkMobileNumber, data,
+          context: navigatorKey.currentContext!);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<Map<String, dynamic>> changeEmail({String? email}) async {
-    // ==================== بيانات وهمية للتجربة ====================
-    await Future.delayed(const Duration(seconds: 1));
-
-    return {
-      "status": 200,
-      "data": {
-        "email": email,
-        "otpValue": "1234",
-      }
-    };
-    // ==============================================================
+    try {
+      var data = {"email": email};
+      var response = await httpPost(Config.checkEmail, data,
+          context: navigatorKey.currentContext!);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<Map<String, dynamic>> otpVerify(
@@ -162,58 +151,45 @@ class AuthRepository {
       bool? changeEmail,
       bool? changeMobile,
       String? defaultCountry}) async {
-    // ==================== بيانات وهمية للتجربة ====================
-    await Future.delayed(const Duration(seconds: 1));
 
-    return {
-      "status": 200,
-      "data": {
-        "token": "fake_token_123456789",
-        "fireStoreId": "driver_001",
+    if (!countryCode!.startsWith("+")) {
+      countryCode = '+$countryCode';
+    }
+    try {
+ 
+
+     var     response = await httpPost(context: context, Config.otpVerification, {
         "phone": phone,
-        "phone_country": countryCode,
-        "phoneCountry": countryCode,
-        "defaultCountry": defaultCountry ?? "JO",
-        "default_country": defaultCountry ?? "JO",
-        "first_name": "Test Driver",
-        "name": "Test Driver",
-        "email": email ?? "test@test.com",
-        "id": 1,
-        "is_verified": 1,
-        "wallet_balance": 100.0,
-        "rating": 5.0,
-        "otpValue": otpValue,
-      }
-    };
-    // ==============================================================
+        "otp_value": otpValue,
+        "phone_country": countryCode
+      });
+
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<Map<String, dynamic>> resendEmailOtpForChange(
       Map<String, dynamic> data) async {
-    // ==================== بيانات وهمية للتجربة ====================
-    await Future.delayed(const Duration(seconds: 1));
-
-    return {
-      "status": 200,
-      "data": {
-        "otpValue": "1234",
-      }
-    };
-    // ==============================================================
+    try {
+      var response = await httpPost(Config.resendTokenEmailChange, data,
+          context: navigatorKey.currentContext!);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<Map<String, dynamic>> forChangePhoneNumberOtpVerification(
       {required Map<String, dynamic> data,
       required BuildContext context}) async {
-    // ==================== بيانات وهمية للتجربة ====================
-    await Future.delayed(const Duration(seconds: 1));
-
-    return {
-      "status": 200,
-      "data": {
-        "otpValue": "1234",
-      }
-    };
-    // ==============================================================
+    try {
+      var response =
+          await httpPost(Config.changeMobileNumber, data, context: context);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 }
