@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:ride_on_driver/core/utils/translate.dart';
+import 'package:zearah_driver/core/utils/translate.dart';
 
 import '../../../core/utils/common_widget.dart';
 import '../../../core/utils/theme/project_color.dart';
