@@ -1,12 +1,12 @@
 import 'dart:async';
- import 'package:ride_on_driver/core/extensions/workspace.dart';
-import 'package:ride_on_driver/data/repositories/register_vehicle.dart';
+import 'package:zearah_driver/core/extensions/workspace.dart';
+import 'package:zearah_driver/data/repositories/register_vehicle.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ride_on_driver/presentation/cubits/general_cubit.dart';
+import 'package:zearah_driver/presentation/cubits/general_cubit.dart';
 
 import '../../../core/services/data_store.dart';
 import '../../../domain/entities/initial_ride_request.dart';
