@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:ride_on_driver/core/services/data_store.dart';
-import 'package:ride_on_driver/core/utils/translate.dart';
-import 'package:ride_on_driver/presentation/widgets/thanku_screen.dart';
+import 'package:zearah_driver/core/services/data_store.dart';
+import 'package:zearah_driver/core/utils/translate.dart';
+import 'package:zearah_driver/presentation/widgets/thanku_screen.dart';
 
 import '../../core/utils/common_widget.dart';
 import '../../core/utils/theme/project_color.dart';
