@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:ride_on_driver/core/utils/translate.dart';
+import 'package:zearah_driver/core/utils/translate.dart';
 
 import '../../../core/extensions/workspace.dart';
 import '../../../core/utils/common_widget.dart';
