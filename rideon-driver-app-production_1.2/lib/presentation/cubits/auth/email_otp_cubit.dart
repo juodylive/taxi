@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:ride_on_driver/data/repositories/auth_repository.dart';
+import 'package:zearah_driver/data/repositories/auth_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
