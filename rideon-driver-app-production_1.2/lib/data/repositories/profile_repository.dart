@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ride_on_driver/core/utils/translate.dart';
+import 'package:zearah_driver/core/utils/translate.dart';
 
 import '../../core/extensions/workspace.dart';
 import '../../core/services/config.dart';
