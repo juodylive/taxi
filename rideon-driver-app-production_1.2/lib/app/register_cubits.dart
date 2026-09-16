@@ -1,14 +1,14 @@
-import 'package:ride_on_driver/data/repositories/auth_repository.dart';
-import 'package:ride_on_driver/data/repositories/dashborad_repository.dart';
-import 'package:ride_on_driver/data/repositories/history_repository.dart';
-import 'package:ride_on_driver/data/repositories/payment_repository.dart';
-import 'package:ride_on_driver/data/repositories/profile_repository.dart';
-import 'package:ride_on_driver/data/repositories/realtime_repository.dart';
-import 'package:ride_on_driver/data/repositories/register_vehicle.dart';
-import 'package:ride_on_driver/data/repositories/review_repository.dart';
+import 'package:zearah_driver/data/repositories/auth_repository.dart';
+import 'package:zearah_driver/data/repositories/dashborad_repository.dart';
+import 'package:zearah_driver/data/repositories/history_repository.dart';
+import 'package:zearah_driver/data/repositories/payment_repository.dart';
+import 'package:zearah_driver/data/repositories/profile_repository.dart';
+import 'package:zearah_driver/data/repositories/realtime_repository.dart';
+import 'package:zearah_driver/data/repositories/register_vehicle.dart';
+import 'package:zearah_driver/data/repositories/review_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/single_child_widget.dart';
-import 'package:ride_on_driver/presentation/cubits/sos_cubit.dart';
+import 'package:zearah_driver/presentation/cubits/sos_cubit.dart';
 
 import '../presentation/cubits/account/delete_account_cubit.dart';
 import '../presentation/cubits/account/update_profile_cubit.dart';
