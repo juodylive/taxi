@@ -1,11 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ride_on_driver/core/utils/theme/project_color.dart';
-import 'package:ride_on_driver/core/utils/theme/theme_style.dart';
-import 'package:ride_on_driver/core/utils/translate.dart';
-import 'package:ride_on_driver/domain/entities/sos_data.dart';
-import 'package:ride_on_driver/presentation/cubits/sos_cubit.dart';
+import 'package:zearah_driver/core/utils/theme/project_color.dart';
+import 'package:zearah_driver/core/utils/theme/theme_style.dart';
+import 'package:zearah_driver/core/utils/translate.dart';
+import 'package:zearah_driver/domain/entities/sos_data.dart';
+import 'package:zearah_driver/presentation/cubits/sos_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SosButtonWidget extends StatefulWidget {
