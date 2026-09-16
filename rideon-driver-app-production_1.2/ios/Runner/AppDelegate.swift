@@ -33,7 +33,7 @@ import AVFoundation
 
         // Set up existing method channel
         let controller = window?.rootViewController as! FlutterViewController
-        let bubbleChannel = FlutterMethodChannel(name: "com.sizh.rideon.driver.taxiapp/floating_bubble", binaryMessenger: controller.binaryMessenger)
+        let bubbleChannel = FlutterMethodChannel(name: "com.zearah.driver/floating_bubble", binaryMessenger: controller.binaryMessenger)
         bubbleChannel.setMethodCallHandler { [weak self] (call, result) in
             guard let self = self else {
                 result(FlutterError(code: "UNAVAILABLE", message: "AppDelegate not available", details: nil))
@@ -62,7 +62,7 @@ import AVFoundation
         }
 
         // ✅ Set up new ringtone channel
-        let ringtoneChannel = FlutterMethodChannel(name: "com.sizh.rideon.driver.taxiapp/ringtone", binaryMessenger: controller.binaryMessenger)
+        let ringtoneChannel = FlutterMethodChannel(name: "com.zearah.driver/ringtone", binaryMessenger: controller.binaryMessenger)
         ringtoneChannel.setMethodCallHandler { [weak self] (call, result) in
             guard let self = self else {
                 result(FlutterError(code: "UNAVAILABLE", message: "AppDelegate not available", details: nil))
@@ -122,7 +122,7 @@ import AVFoundation
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        let channel = FlutterMethodChannel(name: "com.sizh.rideon.driver.taxiapp/floating_bubble", binaryMessenger: (window?.rootViewController as! FlutterViewController).binaryMessenger)
+        let channel = FlutterMethodChannel(name: "com.zearah.driver/floating_bubble", binaryMessenger: (window?.rootViewController as! FlutterViewController).binaryMessenger)
         channel.invokeMethod("locationUpdate", arguments: [
             "latitude": location.coordinate.latitude,
             "longitude": location.coordinate.longitude,

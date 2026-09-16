@@ -1,4 +1,4 @@
-package com.sizh.rideon.driver.taxiapp
+package com.zearah.driver
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
@@ -15,7 +15,7 @@ import io.flutter.plugin.common.MethodChannel
 import android.net.Uri
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "com.sizh.rideon.driver.taxiapp/floating_bubble"
+    private val CHANNEL = "com.zearah.driver/floating_bubble"
     private val TAG = "MainActivity"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
