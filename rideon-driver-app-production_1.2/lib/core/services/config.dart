@@ -1,5 +1,5 @@
 class Config {
- static const googleKey = "YOUR_GOOGLE_MAPS_API_KEY_HERE";
+ static const googleKey = "AIzaSyDCXofdAtQTN5q7GoFr26yJp3iwksHzMHk";
  static const String oneSiginalAppid = 'YOUR_ONESIGNAL_APP_ID_HERE';
  static const String oneSiginalApiKey = 'YOUR_ONESIGNAL_API_KEY_HERE';
 // Temporary base domain URL for setup (please add your final URL here)
