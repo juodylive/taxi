@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:ride_on_driver/core/utils/translate.dart';
-import 'package:ride_on_driver/presentation/screens/payment/payment_gateway_screen.dart';
+import 'package:zearah_driver/core/utils/translate.dart';
+import 'package:zearah_driver/presentation/screens/payment/payment_gateway_screen.dart';
 import '../../../core/extensions/workspace.dart';
 import '../../../core/services/config.dart';
 import '../../../core/utils/common_widget.dart';
