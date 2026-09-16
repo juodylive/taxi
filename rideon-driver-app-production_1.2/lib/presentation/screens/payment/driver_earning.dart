@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:ride_on_driver/core/utils/translate.dart';
+import 'package:zearah_driver/core/utils/translate.dart';
 
 import '../../../core/extensions/workspace.dart';
 import '../../../core/utils/common_widget.dart';
