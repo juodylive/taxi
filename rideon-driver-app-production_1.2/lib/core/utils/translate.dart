@@ -1,4 +1,4 @@
-import 'package:ride_on_driver/app/app_localizations.dart';
+import 'package:zearah_driver/app/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 extension TranslateString on String {
