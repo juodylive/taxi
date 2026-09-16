@@ -67,7 +67,7 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   static const platform =
-      MethodChannel('com.sizh.rideon.driver.taxiapp/floating_bubble');
+      MethodChannel('com.zearah.driver/floating_bubble');
   StreamSubscription<Position>? positionStreamSubscription;
   DateTime? lastUpdateTime;
   @override
