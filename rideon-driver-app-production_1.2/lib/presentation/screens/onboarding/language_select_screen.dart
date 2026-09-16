@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import'package:ride_on_driver/core/services/data_store.dart';
-import 'package:ride_on_driver/core/utils/common_widget.dart';
-import 'package:ride_on_driver/core/utils/translate.dart';
-import 'package:ride_on_driver/core/utils/theme/project_color.dart';
- import'package:ride_on_driver/presentation/cubits/localizations_cubit.dart';
-import 'package:ride_on_driver/presentation/screens/onboarding/on_boarding_screen.dart';
+import 'package:zearah_driver/core/services/data_store.dart';
+import 'package:zearah_driver/core/utils/common_widget.dart';
+import 'package:zearah_driver/core/utils/translate.dart';
+import 'package:zearah_driver/core/utils/theme/project_color.dart';
+import 'package:zearah_driver/presentation/cubits/localizations_cubit.dart';
+import 'package:zearah_driver/presentation/screens/onboarding/on_boarding_screen.dart';
 
 class SelectLanguageScreen extends StatefulWidget {
   final bool isBack;
