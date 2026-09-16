@@ -1,9 +1,9 @@
-import 'package:ride_on_driver/data/repositories/auth_repository.dart';
+import 'package:zearah_driver/data/repositories/auth_repository.dart';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ride_on_driver/presentation/cubits/auth/user_authenticate_cubit.dart';
+import 'package:zearah_driver/presentation/cubits/auth/user_authenticate_cubit.dart';
 
 import '../../../core/extensions/workspace.dart';
 import '../../../core/services/data_store.dart';
