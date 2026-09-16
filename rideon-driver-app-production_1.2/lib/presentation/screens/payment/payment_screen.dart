@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ride_on_driver/core/services/data_store.dart';
-import 'package:ride_on_driver/core/utils/translate.dart';
-import 'package:ride_on_driver/presentation/cubits/general_cubit.dart';
+import 'package:zearah_driver/core/services/data_store.dart';
+import 'package:zearah_driver/core/utils/translate.dart';
+import 'package:zearah_driver/presentation/cubits/general_cubit.dart';
 import '../../../core/extensions/workspace.dart';
 import '../../../core/utils/common_widget.dart';
 import '../../../core/utils/theme/project_color.dart';
