@@ -3,7 +3,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ride_on_driver/data/repositories/payment_repository.dart';
+import 'package:zearah_driver/data/repositories/payment_repository.dart';
 
 import '../../../core/utils/common_widget.dart';
 import '../../../domain/entities/get_payment_type.dart';
