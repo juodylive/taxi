@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ride_on_driver/domain/entities/realtime_ride_request.dart';
+import 'package:zearah_driver/domain/entities/realtime_ride_request.dart';
 
 class CheckRideStatusState extends Equatable {
   @override
