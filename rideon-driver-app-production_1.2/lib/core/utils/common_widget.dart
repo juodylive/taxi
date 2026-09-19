@@ -4648,6 +4648,7 @@ class AppMapController {
 
   void dispose() {
     _controller.dispose();
+  }
 
   void zoomIn() {
     _controller.move(_controller.camera.center, _controller.camera.zoom + 1);
