@@ -10,7 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:zearah_driver/presentation/cubits/location/location_cubit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -4639,34 +4641,52 @@ class MapShimmerScreen extends StatelessWidget {
   }
 }
 
+class AppMapController {
+  final MapController _controller = MapController();
+
+  void zoomIn() {
+    _controller.move(_controller.camera.center, _controller.camera.zoom + 1);
+  }
+
+  void zoomOut() {
+    _controller.move(_controller.camera.center, _controller.camera.zoom - 1);
+  }
+
+  void moveTo(LatLng position, {double? zoom}) {
+    _controller.move(position, zoom ?? _controller.camera.zoom);
+  }
+
+  void fitBounds(List<LatLng> points) {
+    if (points.isEmpty) return;
+    final bounds = LatLngBounds.fromPoints(points);
+    _controller.fitCamera(
+      CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(60)),
+    );
+  }
+}
+
 class CustomGoogleMap extends StatefulWidget {
   final LatLng initialPosition;
-  final Set<Marker> markers;
-  final Set<Polyline> polylines;
-  final CameraPosition? initialCameraPosition;
+  final Set<AppMarker> markers;
+  final List<LatLng> polylinePoints;
   final Function(LatLng)? onMapTap;
   final Function(LatLng)? onMapLongPress;
-  final MapType mapType;
   final bool myLocationEnabled;
   final bool zoomControlsEnabled;
-  final String? mapStyle;
-  final VoidCallback? zoomIn; // Optional JSON string for custom map style
-  final VoidCallback? zoomOut; // Optional JSON string for custom map style
+  final VoidCallback? zoomIn;
+  final VoidCallback? zoomOut;
   final VoidCallback? currentLocation;
-  final Function(GoogleMapController)? onMapCreated;
+  final Function(AppMapController)? onMapCreated;
 
   const CustomGoogleMap(
       {super.key,
       required this.initialPosition,
       this.markers = const {},
-      this.polylines = const {},
-      this.initialCameraPosition,
+      this.polylinePoints = const [],
       this.onMapTap,
       this.onMapLongPress,
-      this.mapType = MapType.normal,
       this.myLocationEnabled = true,
       this.zoomControlsEnabled = true,
-      this.mapStyle,
       this.zoomIn,
       this.zoomOut,
       this.currentLocation,
@@ -4677,25 +4697,59 @@ class CustomGoogleMap extends StatefulWidget {
 }
 
 class _CustomGoogleMapState extends State<CustomGoogleMap> {
+  final AppMapController _mapController = AppMapController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onMapCreated?.call(_mapController);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        GoogleMap(
-          key: ValueKey('google_map_${DateTime.timestamp().microsecond}'),
-          initialCameraPosition: widget.initialCameraPosition ??
-              CameraPosition(
-                target: widget.initialPosition,
-                zoom: 14,
+        FlutterMap(
+          mapController: _mapController._controller,
+          options: MapOptions(
+            initialCenter: widget.initialPosition,
+            initialZoom: 14,
+            onTap: widget.onMapTap == null
+                ? null
+                : (tapPosition, point) => widget.onMapTap!(point),
+            onLongPress: widget.onMapLongPress == null
+                ? null
+                : (tapPosition, point) => widget.onMapLongPress!(point),
+          ),
+          children: [
+            TileLayer(
+              urlTemplate:
+                  "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=7fd22148-c7d7-4f1f-b33f-677c8dbc8496",
+              userAgentPackageName: 'com.zearah.driver',
+            ),
+            if (widget.polylinePoints.isNotEmpty)
+              PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: widget.polylinePoints,
+                    strokeWidth: 4,
+                    color: Colors.blue,
+                  ),
+                ],
               ),
-          markers: widget.markers,
-          polylines: widget.polylines,
-          mapType: widget.mapType,
-          myLocationEnabled: widget.myLocationEnabled,
-          zoomControlsEnabled: widget.zoomControlsEnabled,
-          onTap: widget.onMapTap,
-          onLongPress: widget.onMapLongPress,
-          onMapCreated: widget.onMapCreated,
+            MarkerLayer(
+              markers: widget.markers
+                  .map((m) => Marker(
+                        point: m.position,
+                        width: 48,
+                        height: 48,
+                        child: Image.memory(m.icon),
+                      ))
+                  .toList(),
+            ),
+          ],
         ),
         Positioned(
           top: 100,
