@@ -4,7 +4,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:zearah_driver/core/utils/translate.dart';
 import 'package:zearah_driver/presentation/cubits/general_cubit.dart';
 import '../../../core/extensions/helper/push_notifications.dart';
@@ -38,8 +39,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
     with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
   AppLifecycleState _appLifecycleState = AppLifecycleState.resumed;
 
-  GoogleMapController? mapController;
-  final Completer<GoogleMapController> _controller = Completer();
+  final AppMapController mapController = AppMapController();
   LatLng? currentLocation;
 
   bool isOnDuty = false;
@@ -87,12 +87,12 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
 
 
 
-  void zoomIn() => mapController?.animateCamera(CameraUpdate.zoomIn());
-  void zoomOut() => mapController?.animateCamera(CameraUpdate.zoomOut());
+  void zoomIn() => mapController.zoomIn();
+  void zoomOut() => mapController.zoomOut();
 
   void centerMap() {
     if (currentLocation != null) {
-      mapController?.animateCamera(CameraUpdate.newLatLng(currentLocation!));
+      mapController.moveTo(currentLocation!);
     }
   }
 
@@ -100,7 +100,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _debounceTimer?.cancel();
-    mapController?.dispose();
+    mapController.dispose();
 
     super.dispose();
   }
@@ -450,20 +450,31 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                           },
                         );
                       } else {
-                        return GoogleMap(
-                          initialCameraPosition: CameraPosition(
-                            target: currentLocation ?? const LatLng(0, 0),
-                            zoom: 12,
+                        return FlutterMap(
+                          mapController: mapController.raw,
+                          options: MapOptions(
+                            initialCenter: currentLocation ?? const LatLng(0, 0),
+                            initialZoom: 12,
                           ),
-                          markers: markerState is HomeMarkerUpdated
-                              ? markerState.markers
-                              : {},
-                          onMapCreated: (controller) {
-                            mapController = controller;
-                            if (!_controller.isCompleted) {
-                              _controller.complete(controller);
-                            }
-                          },
+                          children: [
+                            TileLayer(
+                              urlTemplate:
+                                  "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=7fd22148-c7d7-4f1f-b33f-677c8dbc8496",
+                              userAgentPackageName: 'com.zearah.driver',
+                            ),
+                            MarkerLayer(
+                              markers: (markerState is HomeMarkerUpdated
+                                      ? markerState.markers
+                                      : <AppMarker>{})
+                                  .map((m) => Marker(
+                                        point: m.position,
+                                        width: 48,
+                                        height: 48,
+                                        child: Image.memory(m.icon),
+                                      ))
+                                  .toList(),
+                            ),
+                          ],
                         );
                       }
                     },
