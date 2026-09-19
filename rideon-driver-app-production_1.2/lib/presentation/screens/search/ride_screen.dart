@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:zearah_driver/core/utils/translate.dart';
 import '../../../core/extensions/workspace.dart';
 import '../../../core/services/data_store.dart';
@@ -48,8 +48,8 @@ class RideScreens extends StatefulWidget {
 }
 
 class _RideScreenState extends State<RideScreens> {
-  GoogleMapController? mapController;
-  final Completer<GoogleMapController> _controller = Completer();
+  AppMapController? mapController;
+  final Completer<AppMapController> _controller = Completer();
   RealTimeRideRequest? rideData;
   bool isOnDutyCompleted = false;
   bool isShowPopUp = false;
@@ -965,7 +965,7 @@ class PersistentGoogleMap extends StatefulWidget {
   final LatLng initialPosition;
 
   final bool myLocationEnabled;
-  final Function(GoogleMapController) onMapCreated;
+  final Function(AppMapController) onMapCreated;
 
   const PersistentGoogleMap({
     super.key,
@@ -979,10 +979,24 @@ class PersistentGoogleMap extends StatefulWidget {
 }
 
 class PersistentGoogleMapState extends State<PersistentGoogleMap> {
-  GoogleMapController? _mapController;
+  final AppMapController _mapController = AppMapController();
 
-  Set<Marker> markers = {};
-  Set<Polyline> polyline = {};
+  Set<AppMarker> markers = {};
+  List<LatLng> polylinePoints = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onMapCreated(_mapController);
+    });
+  }
+
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -995,26 +1009,48 @@ class PersistentGoogleMapState extends State<PersistentGoogleMap> {
         return BlocBuilder<GetPolylineCubit, GetPolylineState>(
           builder: (context, polylineState) {
             if (polylineState is GetPolylineUpdated) {
-              polyline = polylineState.polylines ?? {};
+              polylinePoints = polylineState.polylines?.values
+                      .expand((points) => points)
+                      .toList() ??
+                  [];
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 _moveCameraToFitPolylineAndMarkers();
               });
             }
 
-            return GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: widget.initialPosition,
-                zoom: 15,
+            return FlutterMap(
+              mapController: _mapController.raw,
+              options: MapOptions(
+                initialCenter: widget.initialPosition,
+                initialZoom: 15,
               ),
-              myLocationEnabled: widget.myLocationEnabled,
-              markers: markers,
-              polylines: polyline,
-              onMapCreated: (controller) {
-                if (_mapController == null) {
-                  _mapController = controller;
-                  widget.onMapCreated(controller);
-                }
-              },
+              children: [
+                TileLayer(
+                  urlTemplate:
+                      "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=7fd22148-c7d7-4f1f-b33f-677c8dbc8496",
+                  userAgentPackageName: 'com.zearah.driver',
+                ),
+                if (polylinePoints.isNotEmpty)
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: polylinePoints,
+                        strokeWidth: 4,
+                        color: Colors.blue,
+                      ),
+                    ],
+                  ),
+                MarkerLayer(
+                  markers: markers
+                      .map((m) => Marker(
+                            point: m.position,
+                            width: 48,
+                            height: 48,
+                            child: Image.memory(m.icon),
+                          ))
+                      .toList(),
+                ),
+              ],
             );
           },
         );
@@ -1023,36 +1059,19 @@ class PersistentGoogleMapState extends State<PersistentGoogleMap> {
   }
 
   void _moveCameraToFitPolylineAndMarkers() {
-    if (_mapController == null || (polyline.isEmpty && markers.isEmpty)) return;
-
-    LatLngBounds bounds;
+    if (polylinePoints.isEmpty && markers.isEmpty) return;
 
     final points = [
-      ...polyline.expand((p) => p.points),
+      ...polylinePoints,
       ...markers.map((m) => m.position),
     ];
 
     if (points.isEmpty) return;
 
-    final southwestLat =
-        points.map((p) => p.latitude).reduce((a, b) => a < b ? a : b);
-    final southwestLng =
-        points.map((p) => p.longitude).reduce((a, b) => a < b ? a : b);
-    final northeastLat =
-        points.map((p) => p.latitude).reduce((a, b) => a > b ? a : b);
-    final northeastLng =
-        points.map((p) => p.longitude).reduce((a, b) => a > b ? a : b);
-
-    bounds = LatLngBounds(
-      southwest: LatLng(southwestLat, southwestLng),
-      northeast: LatLng(northeastLat, northeastLng),
-    );
-
-    _mapController!.animateCamera(
-      CameraUpdate.newLatLngBounds(bounds, 130), // 50 = padding
-    );
+    _mapController.fitBounds(points);
   }
 }
+
 class RetryWithGoHome extends StatelessWidget {
   final bool showNoData;
   final bool hasRetried;
