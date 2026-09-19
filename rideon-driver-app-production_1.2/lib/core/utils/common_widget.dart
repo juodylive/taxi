@@ -4644,6 +4644,11 @@ class MapShimmerScreen extends StatelessWidget {
 class AppMapController {
   final MapController _controller = MapController();
 
+  MapController get raw => _controller;
+
+  void dispose() {
+    _controller.dispose();
+
   void zoomIn() {
     _controller.move(_controller.camera.center, _controller.camera.zoom + 1);
   }
