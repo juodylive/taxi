@@ -1,12 +1,26 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
- import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../../core/services/data_store.dart';
 import '../../../core/utils/common_widget.dart';
+
+class AppMarker {
+  final String markerId;
+  final LatLng position;
+  final String title;
+  final Uint8List icon;
+
+  AppMarker({
+    required this.markerId,
+    required this.position,
+    required this.title,
+    required this.icon,
+  });
+}
 
 abstract class LocationState extends Equatable {
   @override
@@ -38,15 +52,13 @@ class LocationFailure extends LocationState {
 class LocationCubit extends Cubit<LocationState> {
   LocationCubit() : super(LocationInitial());
   late StreamSubscription<Position> positionStreamSubscription;
-  var markers = <Marker>{};
+  var markers = <AppMarker>{};
 
   void startLiveLocationTracking() async {
-
     try {
       LocationPermission permission = await _checkPermissions();
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-
         return;
       }
 
@@ -56,9 +68,9 @@ class LocationCubit extends Cubit<LocationState> {
       );
 
       updateDriverLocation(position);
-      int firebaseUpdateTime=int.parse(box.get("firebaseUpdatedLocation")??"10");
+      int firebaseUpdateTime = int.parse(box.get("firebaseUpdatedLocation") ?? "10");
 
-      DateTime lastUpdateTime = DateTime.now().subtract(  Duration(seconds:  firebaseUpdateTime));
+      DateTime lastUpdateTime = DateTime.now().subtract(Duration(seconds: firebaseUpdateTime));
 
       positionStreamSubscription = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
@@ -69,21 +81,16 @@ class LocationCubit extends Cubit<LocationState> {
         final now = DateTime.now();
         if (now.difference(lastUpdateTime).inSeconds >= firebaseUpdateTime) {
           lastUpdateTime = now;
-
-
           updateDriverLocation(position);
         }
       });
-    // ignore: empty_catches
-    } catch (e) {
-
-    }
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   Future<LocationPermission> _checkPermissions() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-
       return LocationPermission.denied;
     }
 
@@ -91,14 +98,10 @@ class LocationCubit extends Cubit<LocationState> {
 
     while (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-
-      }
+      if (permission == LocationPermission.denied) {}
     }
 
     if (permission == LocationPermission.deniedForever) {
-
-
       await Geolocator.openLocationSettings();
     }
 
@@ -106,7 +109,6 @@ class LocationCubit extends Cubit<LocationState> {
   }
 
   void updateDriverLocation(Position position) async {
-
     try {
       LatLng currentLocation = LatLng(position.latitude, position.longitude);
 
@@ -144,7 +146,8 @@ class RideLocationSucess extends RideLocationState {
   @override
   List<Object?> get props => [currentLocation];
 }
- class RideLocationFailure extends RideLocationState {
+
+class RideLocationFailure extends RideLocationState {
   final String? error;
   RideLocationFailure({this.error});
   @override
@@ -154,15 +157,13 @@ class RideLocationSucess extends RideLocationState {
 class RideLocationCubit extends Cubit<RideLocationState> {
   RideLocationCubit() : super(RideLocationInitial());
   late StreamSubscription<Position> positionStreamSubscription;
-  var markers = <Marker>{};
+  var markers = <AppMarker>{};
 
   Future<void> startLiveLocationTracking() async {
-
     try {
       LocationPermission permission = await _checkPermissions();
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-
         return;
       }
 
@@ -183,23 +184,18 @@ class RideLocationCubit extends Cubit<RideLocationState> {
   Future<LocationPermission> _checkPermissions() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-
       return LocationPermission.denied;
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-
     }
-
-
 
     return permission;
   }
 
   void updateDriverLocation(Position position) async {
-
     try {
       LatLng currentLocation = LatLng(position.latitude, position.longitude);
 
@@ -224,7 +220,7 @@ abstract class MarkerState extends Equatable {
 class MarkerInitial extends MarkerState {}
 
 class MarkerUpdated extends MarkerState {
-  final Set<Marker> markers;
+  final Set<AppMarker> markers;
 
   MarkerUpdated({required this.markers});
 
@@ -235,31 +231,27 @@ class MarkerUpdated extends MarkerState {
 class MarkerCubit extends Cubit<MarkerState> {
   MarkerCubit() : super(MarkerInitial());
 
-  final Set<Marker> _markers = {};
+  final Set<AppMarker> _markers = {};
 
   void addOrUpdateMarker(LatLng position, String title, String markerId,
       String image, int size) async {
     final Uint8List markerIcon = await getBytesFromAsset(image, size);
 
-    Marker marker = Marker(
-      markerId: MarkerId(markerId),
+    AppMarker marker = AppMarker(
+      markerId: markerId,
       position: position,
-      draggable: false,
-      zIndex: 2,
-      flat: true,
-      infoWindow: InfoWindow(title: title),
-      // ignore: deprecated_member_use
-      icon: BitmapDescriptor.fromBytes(markerIcon),
+      title: title,
+      icon: markerIcon,
     );
 
-    _markers.removeWhere((m) => m.markerId.value == markerId);
+    _markers.removeWhere((m) => m.markerId == markerId);
     _markers.add(marker);
 
     emit(MarkerUpdated(markers: _markers));
   }
 
   void deleteMarker(String markerId) {
-    _markers.removeWhere((marker) => marker.markerId.value == markerId);
+    _markers.removeWhere((marker) => marker.markerId == markerId);
     emit(MarkerUpdated(markers: _markers));
   }
 
@@ -268,7 +260,6 @@ class MarkerCubit extends Cubit<MarkerState> {
     deleteMarker("Drop_marker");
     deleteMarker("Driver_marker");
     emit(MarkerInitial());
-
   }
 }
 
@@ -280,7 +271,7 @@ abstract class HomeMarkerState extends Equatable {
 class HomeMarkerInitial extends HomeMarkerState {}
 
 class HomeMarkerUpdated extends HomeMarkerState {
-  final Set<Marker> markers;
+  final Set<AppMarker> markers;
 
   HomeMarkerUpdated({required this.markers});
 
@@ -291,24 +282,20 @@ class HomeMarkerUpdated extends HomeMarkerState {
 class HomeMarkerCubit extends Cubit<HomeMarkerState> {
   HomeMarkerCubit() : super(HomeMarkerInitial());
 
-  final Set<Marker> _markers = {};
+  final Set<AppMarker> _markers = {};
 
   void addOrUpdateMarker(LatLng position, String title, String markerId,
       String image, int size) async {
     final Uint8List markerIcon = await getBytesFromAsset(image, size);
 
-    Marker marker = Marker(
-      markerId: MarkerId(markerId),
+    AppMarker marker = AppMarker(
+      markerId: markerId,
       position: position,
-      draggable: false,
-      zIndex: 2,
-      flat: true,
-      infoWindow: InfoWindow(title: title),
-      // ignore: deprecated_member_use
-      icon: BitmapDescriptor.fromBytes(markerIcon),
+      title: title,
+      icon: markerIcon,
     );
 
-    _markers.removeWhere((m) => m.markerId.value == markerId);
+    _markers.removeWhere((m) => m.markerId == markerId);
     _markers.add(marker);
 
     emit(HomeMarkerUpdated(markers: _markers));
@@ -327,7 +314,7 @@ abstract class RideMarkerState extends Equatable {
 class RideMarkerInitial extends RideMarkerState {}
 
 class RideMarkerSuccess extends RideMarkerState {
-  final Set<Marker> markers;
+  final Set<AppMarker> markers;
 
   RideMarkerSuccess({required this.markers});
 
@@ -338,31 +325,27 @@ class RideMarkerSuccess extends RideMarkerState {
 class RideMarkerCubit extends Cubit<RideMarkerState> {
   RideMarkerCubit() : super(RideMarkerInitial());
 
-  final Set<Marker> _markers = {};
+  final Set<AppMarker> _markers = {};
 
   void addOrUpdateMarker(LatLng position, String title, String markerId,
       String image, int size) async {
     final Uint8List markerIcon = await getBytesFromAsset(image, size);
 
-    Marker marker = Marker(
-      markerId: MarkerId(markerId),
+    AppMarker marker = AppMarker(
+      markerId: markerId,
       position: position,
-      draggable: false,
-      zIndex: 2,
-      flat: true,
-      infoWindow: InfoWindow(title: title),
-      // ignore: deprecated_member_use
-      icon: BitmapDescriptor.fromBytes(markerIcon),
+      title: title,
+      icon: markerIcon,
     );
 
-    _markers.removeWhere((m) => m.markerId.value == markerId);
+    _markers.removeWhere((m) => m.markerId == markerId);
     _markers.add(marker);
 
     emit(RideMarkerSuccess(markers: _markers));
   }
 
   void deleteMarker(String markerId) {
-    _markers.removeWhere((marker) => marker.markerId.value == markerId);
+    _markers.removeWhere((marker) => marker.markerId == markerId);
     emit(RideMarkerSuccess(markers: _markers));
   }
 
@@ -370,7 +353,6 @@ class RideMarkerCubit extends Cubit<RideMarkerState> {
     emit(RideMarkerInitial());
   }
 }
-
 
 abstract class GetDriverDataState extends Equatable {
   @override
@@ -384,15 +366,12 @@ class GetDriverDataLoading extends GetDriverDataState {}
 class DriverFetched extends GetDriverDataState {
   final String? status;
 
-
   DriverFetched({
     required this.status,
-
   });
 
   @override
-  List<Object?> get props =>
-      [status,  ];
+  List<Object?> get props => [status];
 }
 
 class DriverError extends GetDriverDataState {
@@ -407,12 +386,11 @@ class DriverError extends GetDriverDataState {
 class GetDriverDataCubit extends Cubit<GetDriverDataState> {
   GetDriverDataCubit() : super(GetDriverDataInitial());
 
-  void updatedDriverStatus(String status)   {
-    if(status.isNotEmpty){
-      emit(DriverFetched(status: status,));
-
-    }else{
-      emit(DriverFetched(status: "inactive",));
+  void updatedDriverStatus(String status) {
+    if (status.isNotEmpty) {
+      emit(DriverFetched(status: status));
+    } else {
+      emit(DriverFetched(status: "inactive"));
     }
   }
 
@@ -420,5 +398,3 @@ class GetDriverDataCubit extends Cubit<GetDriverDataState> {
     emit(GetDriverDataInitial());
   }
 }
-
-
