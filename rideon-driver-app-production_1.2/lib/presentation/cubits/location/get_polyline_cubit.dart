@@ -1,12 +1,13 @@
+import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart';
 import 'dart:ui' as ui;
 
-import '../../../core/services/config.dart';
+const String osrmBaseUrl = 'http://158.101.231.22:5000';
 
 abstract class GetPolylineState extends Equatable {
   @override
@@ -18,7 +19,7 @@ class GetPolylineInitial extends GetPolylineState {}
 class ResetPolylineInitial extends GetPolylineState {}
 
 class GetPolylineLoading extends GetPolylineState {
-  final Set<Polyline> polylines;
+  final Map<String, List<LatLng>> polylines;
   GetPolylineLoading(this.polylines);
 
   @override
@@ -26,7 +27,7 @@ class GetPolylineLoading extends GetPolylineState {
 }
 
 class GetPolylineUpdated extends GetPolylineState {
-  final Set<Polyline>? polylines;
+  final Map<String, List<LatLng>>? polylines;
   GetPolylineUpdated({this.polylines});
 
   @override
@@ -44,10 +45,9 @@ class GetPolylineUpdatedError extends GetPolylineState {
 class GetPolylineCubit extends Cubit<GetPolylineState> {
   GetPolylineCubit() : super(GetPolylineInitial());
 
-  final Map<PolylineId, Polyline> _polylines = {};
-  final PolylinePoints _polylinePoints = PolylinePoints();
+  final Map<String, List<LatLng>> _polylines = {};
 
-   Future<void> getPolyline({
+  Future<void> getPolyline({
     required double sourcelat,
     required double sourcelng,
     required double destinationlat,
@@ -63,64 +63,39 @@ class GetPolylineCubit extends Cubit<GetPolylineState> {
         return;
       }
 
-      emit(GetPolylineLoading(_polylines.values.toSet()));
+      emit(GetPolylineLoading(Map.from(_polylines)));
 
-      final result = await _polylinePoints.getRouteBetweenCoordinates(
-        googleApiKey: Config.googleKey,
-        request: PolylineRequest(
-          origin: PointLatLng(sourcelat, sourcelng),
-          destination: PointLatLng(destinationlat, destinationlng),
-          mode: TravelMode.driving,
-        ),
-      );
+      final url = Uri.parse(
+          '$osrmBaseUrl/route/v1/driving/$sourcelng,$sourcelat;$destinationlng,$destinationlat?overview=full&geometries=geojson');
 
-      if (result.status == 'OK') {
-        final polylineCoordinates = result.points
-            .map((point) => LatLng(point.latitude, point.longitude))
+      final response = await http.get(url);
+      final data = jsonDecode(response.body);
+
+      if (data['code'] == 'Ok') {
+        final coordinates = data['routes'][0]['geometry']['coordinates'] as List;
+        final polylineCoordinates = coordinates
+            .map<LatLng>((point) => LatLng(point[1] as double, point[0] as double))
             .toList();
 
-        final PolylineId polylineId = isPickupRoute
-            ? const PolylineId("DriverPickupToUser")
-            : const PolylineId("DriverDropoffToUser");
+        final String polylineId =
+            isPickupRoute ? "DriverPickupToUser" : "DriverDropoffToUser";
+        final String oppositePolylineId =
+            isPickupRoute ? "DriverDropoffToUser" : "DriverPickupToUser";
 
-         final PolylineId oppositePolylineId = isPickupRoute
-            ? const PolylineId("DriverDropoffToUser")
-            : const PolylineId("DriverPickupToUser");
         _polylines.remove(oppositePolylineId);
+        _polylines[polylineId] = polylineCoordinates;
 
-         _polylines.remove(polylineId);
-
-        _addPolyLine(
-          coordinates: polylineCoordinates,
-          id: polylineId,
-          color: isPickupRoute ? Colors.blue : Colors.green,
-        );
-
-        emit(GetPolylineUpdated(polylines: _polylines.values.toSet()));
+        emit(GetPolylineUpdated(polylines: Map.from(_polylines)));
       } else {
         emit(GetPolylineUpdatedError(
-            result.errorMessage ?? "Failed to get polyline"));
+            data['message']?.toString() ?? "Failed to get polyline"));
       }
     } catch (e) {
       emit(GetPolylineUpdatedError("Exception: $e"));
     }
   }
 
-  void _addPolyLine({
-    required List<LatLng> coordinates,
-    required PolylineId id,
-    required Color color,
-  }) {
-    final polyline = Polyline(
-      polylineId: id,
-      color: color,
-      width: 5,
-      points: coordinates,
-    );
-    _polylines[id] = polyline;
-  }
-
-  Set<Polyline> get currentPolylines => _polylines.values.toSet();
+  Map<String, List<LatLng>> get currentPolylines => Map.from(_polylines);
 
   void resetPolylines() {
     _polylines.clear();
@@ -137,7 +112,7 @@ abstract class UpdateRideMarkerState extends Equatable {
 class RideMarkerInitial extends UpdateRideMarkerState {}
 
 class RideMarkerLoading extends UpdateRideMarkerState {
-  final Set<Marker> markers;
+  final Set<AppMarkerSimple> markers;
   RideMarkerLoading(this.markers);
 
   @override
@@ -145,7 +120,7 @@ class RideMarkerLoading extends UpdateRideMarkerState {
 }
 
 class RideMarkerUpdated extends UpdateRideMarkerState {
-  final Set<Marker> markers;
+  final Set<AppMarkerSimple> markers;
   RideMarkerUpdated(this.markers);
 
   @override
@@ -158,6 +133,20 @@ class RideMarkerError extends UpdateRideMarkerState {
 
   @override
   List<Object?> get props => [error];
+}
+
+class AppMarkerSimple {
+  final String markerId;
+  final LatLng position;
+  final String title;
+  final Uint8List? icon;
+
+  AppMarkerSimple({
+    required this.markerId,
+    required this.position,
+    required this.title,
+    this.icon,
+  });
 }
 
 // Driver Map Cubit
@@ -173,33 +162,32 @@ class UpdateRideMarkerCubit extends Cubit<UpdateRideMarkerState> {
     required String pickupImage,
     required String dropOffImage,
   }) async {
-    emit(RideMarkerLoading(const <Marker>{}));
+    emit(RideMarkerLoading(const <AppMarkerSimple>{}));
 
     try {
       final Uint8List markerIconDropOff =
           await getBytesFromAsset(dropOffImage, 40);
+      final Uint8List markerIconPickup =
+          await getBytesFromAsset(pickupImage, 40);
 
-      Set<Marker> markers = {};
+      Set<AppMarkerSimple> markers = {};
 
-
-      markers.add(Marker(
-        markerId: const MarkerId('pickup'),
+      markers.add(AppMarkerSimple(
+        markerId: 'pickup',
         position: LatLng(sourcelat, sourcelng),
-        icon: BitmapDescriptor.defaultMarker,
-        infoWindow: const InfoWindow(title: 'Pickup Location'),
+        title: 'Pickup Location',
+        icon: markerIconPickup,
       ));
 
-
-      markers.add(Marker(
-        markerId: const MarkerId('dropoff'),
+      markers.add(AppMarkerSimple(
+        markerId: 'dropoff',
         position: LatLng(destinationlat, destinationlng),
-        icon: BitmapDescriptor.bytes(markerIconDropOff),
-        infoWindow: const InfoWindow(title: 'Dropoff Location'),
+        title: 'Dropoff Location',
+        icon: markerIconDropOff,
       ));
 
       emit(RideMarkerUpdated(markers));
     } catch (e) {
-
       emit(RideMarkerError(e.toString()));
     }
   }
