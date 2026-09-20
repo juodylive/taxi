@@ -476,6 +476,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                                   .toList(),
                             ),
                           ],
+                          },  
                         );
                       }
                     },
