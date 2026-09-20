@@ -452,37 +452,33 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                       } else {
                         return Positioned.fill(
                           child: FlutterMap(
-                          mapController: mapController.raw,
-                          options: MapOptions(
-                            initialCenter: currentLocation ?? const LatLng(0, 0),
-                            initialZoom: 12,
+                            mapController: mapController.raw,
+                            options: MapOptions(
+                              initialCenter: currentLocation ?? const LatLng(0, 0),
+                              initialZoom: 12,
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=7fd22148-c7d7-4f1f-b33f-677c8dbc8496",
+                                userAgentPackageName: 'com.zearah.driver',
+                              ),
+                              MarkerLayer(
+                                markers: (markerState is HomeMarkerUpdated
+                                        ? markerState.markers
+                                        : <AppMarker>{})
+                                    .map((m) => Marker(
+                                          point: m.position,
+                                          width: 48,
+                                          height: 48,
+                                          child: Image.memory(m.icon),
+                                        ))
+                                    .toList(),
+                              ),
+                            ],
                           ),
-                          children: [
-                            TileLayer(
-                              urlTemplate:
-                                  "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=7fd22148-c7d7-4f1f-b33f-677c8dbc8496",
-                              userAgentPackageName: 'com.zearah.driver',
-                            ),
-                            MarkerLayer(
-                              markers: (markerState is HomeMarkerUpdated
-                                      ? markerState.markers
-                                      : <AppMarker>{})
-                                  .map((m) => Marker(
-                                        point: m.position,
-                                        width: 48,
-                                        height: 48,
-                                        child: Image.memory(m.icon),
-                                      ))
-                                  .toList(),
-                            ),
-                          ],
-                          },  
                         );
                       }
-                    },
-                  );
-                },
-              ),
               SafeArea(
                 child: Padding(
                   padding:
