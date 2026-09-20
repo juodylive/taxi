@@ -450,7 +450,8 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                           },
                         );
                       } else {
-                        return FlutterMap(
+                        return Positioned.fill(
+                          child: FlutterMap(
                           mapController: mapController.raw,
                           options: MapOptions(
                             initialCenter: currentLocation ?? const LatLng(0, 0),
