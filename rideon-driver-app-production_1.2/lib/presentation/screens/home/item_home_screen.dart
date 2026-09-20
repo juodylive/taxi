@@ -459,8 +459,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                             ),
                             children: [
                               TileLayer(
-                                urlTemplate:
-                                    "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=7fd22148-c7d7-4f1f-b33f-677c8dbc8496",
+                                urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                                 userAgentPackageName: 'com.zearah.driver',
                               ),
                               MarkerLayer(
