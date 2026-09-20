@@ -479,6 +479,10 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                           ),
                         );
                       }
+                    },
+                  );
+                },
+              ),
               SafeArea(
                 child: Padding(
                   padding:
