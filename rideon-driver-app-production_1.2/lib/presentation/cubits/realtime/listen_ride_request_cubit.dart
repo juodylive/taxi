@@ -75,7 +75,27 @@ class ListenRideRequestCubit extends Cubit<ListenRideRequestState> {
               rideId: rideRequest.rideId,
             ));
           } catch (e) {
-            //
+            // TEMPORARY DIAGNOSTIC: show the parse error and raw data on
+            // screen so it can be captured with a screenshot. Remove this
+            // block once the root cause is fixed.
+            final ctx = navigatorKey.currentContext;
+            if (ctx != null) {
+              showDialog(
+                context: ctx,
+                builder: (_) => AlertDialog(
+                  title: const Text("RIDE_REQUEST_PARSE_ERROR"),
+                  content: SingleChildScrollView(
+                    child: Text("Error: $e\n\nRaw data: $rideRequestData"),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      child: const Text("OK"),
+                    ),
+                  ],
+                ),
+              );
+            }
           }
         } else {
         }
